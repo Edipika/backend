@@ -1,0 +1,43 @@
+require('dotenv').config(); // Load the .env file before anything else
+const express = require('express');
+const cors = require('cors');
+const app = express();
+const categoryRoutes = require('./routes/categoryRoutes');
+const productRoutes= require('./routes/productRoutes')
+const userRoutes= require('./routes/user-routes')
+const registerRouter = require('./routes/register');
+
+// const upload = require('./middleware/multer');
+// const db = require('./config/database'); // This needs access to environment variables
+// const upload = multer({ storage: storage });
+const corsOptions = {
+  origin: 'http://localhost:3000', // Allow frontend origin
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow necessary methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allow necessary headers
+  credentials: true, // Allow sending credentials (cookies, Authorization header)
+};
+
+app.use(cors(corsOptions));
+app.use(express.json());
+
+app.use(express.urlencoded({ extended: true })); 
+
+
+
+// Example route
+app.get('/', (req, res) => {
+  res.send('API is running');
+});
+
+// category routes
+app.use('/categories', categoryRoutes); 
+app.use('/products', productRoutes); 
+app.use('/api',userRoutes ); 
+
+app.use('/register', registerRouter); 
+
+
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
