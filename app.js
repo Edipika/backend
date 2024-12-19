@@ -6,6 +6,10 @@ const categoryRoutes = require('./routes/categoryRoutes');
 const productRoutes= require('./routes/productRoutes')
 const userRoutes= require('./routes/user-routes')
 const registerRouter = require('./routes/register');
+const authRouter = require('./routes/authRoutes');
+const refreshRouter = require('./routes/refresh');
+const verifyJWT = require('./middleware/verifyJWT');
+
 
 // const upload = require('./middleware/multer');
 // const db = require('./config/database'); // This needs access to environment variables
@@ -35,6 +39,11 @@ app.use('/products', productRoutes);
 app.use('/api',userRoutes ); 
 
 app.use('/register', registerRouter); 
+app.use('/auth', authRouter); 
+app.use('/refresh', refreshRouter); 
+
+app.use(verifyJWT);
+app.use('/users', require('./routes/users'));
 
 
 
