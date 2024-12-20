@@ -37,7 +37,7 @@ const handleLogin = async (req, res) => {
             { "username": foundUser.username },
             // process.env.REFRESH_TOKEN_SECRET,
             REFRESH_TOKEN_SECRET,
-            { expiresIn: '10s' }
+            { expiresIn: '60s' }
         );
 
         try {
@@ -45,7 +45,7 @@ const handleLogin = async (req, res) => {
                 "user_id": foundUser.id,
                 "token": newRefreshToken
             });
-             console.log("RefreshTokens", newRefreshToken);
+
   
         } catch (error) {
             console.error('Error saving refresh token:', error);

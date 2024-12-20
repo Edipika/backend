@@ -9,6 +9,7 @@ const registerRouter = require('./routes/register');
 const authRouter = require('./routes/authRoutes');
 const refreshRouter = require('./routes/refresh');
 const verifyJWT = require('./middleware/verifyJWT');
+const cookieParser = require('cookie-parser');
 
 
 // const upload = require('./middleware/multer');
@@ -23,7 +24,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
-
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true })); 
 
 
@@ -49,4 +50,8 @@ app.use('/users', require('./routes/users'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+
+
+
 

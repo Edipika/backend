@@ -4,6 +4,8 @@ const ACCESS_TOKEN_SECRET = 'Dipika@1811';
 const REFRESH_TOKEN_SECRET = 'Dipika@8502';
 
 const handleRefreshToken = async (req, res) => {
+    console.log("request Data inside Hanle rEfresh Token ");
+    console.log("request Data",req.cookies);
     const cookies = req.cookies;
     if (!cookies?.jwt) return res.sendStatus(401);
     const refreshToken = cookies.jwt;
@@ -69,7 +71,7 @@ const handleRefreshToken = async (req, res) => {
                     { "username": foundUser.username },
                     // process.env.REFRESH_TOKEN_SECRET,
                     REFRESH_TOKEN_SECRET,
-                    { expiresIn: '10s' }
+                    { expiresIn: '60s' }
                 );
 
 
