@@ -4,63 +4,43 @@ const ACCESS_TOKEN_SECRET = 'Dipika@1811';
 const REFRESH_TOKEN_SECRET = 'Dipika@8502';
 
 const handleRefreshToken = async (req, res) => {
-    console.log("request Data inside Hanle rEfresh Token ");
-    console.log("request Data",req.cookies);
     const cookies = req.cookies;
     if (!cookies?.jwt) return res.sendStatus(401);
     const refreshToken = cookies.jwt;
     res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true });
 
-    // const foundUser = await User.findOne({ refreshToken }).exec();
-
-    // Detected refresh token reuse!
-    // if (!foundUser) {
-    //     jwt.verify(
-    //         refreshToken,
-    //         process.env.REFRESH_TOKEN_SECRET,
-    //         async (err, decoded) => {
-    //             if (err) return res.sendStatus(403); //Forbidden
-    //             // Delete refresh tokens of hacked user
-    //             const hackedUser = await User.findOne({ username: decoded.username }).exec();
-    //             hackedUser.refreshToken = [];
-    //             const result = await hackedUser.save();
-    //         }
-    //     )
-    //     return res.sendStatus(403); //Forbidden
-    // }
     try {
-        // const foundUser = await RefreshTokens.findOne({
-        //     where: { token: refreshToken }
-        // });
-        // if (!foundUser) return res.sendStatus(403); // Forbidden
-        // const newRefreshTokenArray = foundUser.refreshToken.filter(rt => rt !== refreshToken);
-
-        // Find the refresh token in the database
         const foundToken = await RefreshTokens.findOne({ where: { token: refreshToken } });
-        if (!foundToken) return res.sendStatus(403); // Forbidden
-
-        // Find the associated user
-        const foundUser = await User.findByPk(foundToken.user_id);
-        if (!foundUser) return res.sendStatus(403); // Forbidden
+        if (!foundToken) {
+            jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, async (err, decoded) => {
+                if (!err) {
+                    // If decoded successfully but token not found, delete all user's tokens
+                    await RefreshTokens.destroy({ where: { userId: decoded.UserInfo.id } });
+                }
+            });
+            return res.sendStatus(403); // Forbidden
+        }
 
         // evaluate jwt 
         jwt.verify(
             refreshToken,
             REFRESH_TOKEN_SECRET,
             async (err, decoded) => {
-                if (err || foundUser.username !== decoded.username) {
-                    // expired refresh token
-                    await foundToken.destroy(); // Remove the invalid token
+                const foundUser = await User.findOne({ where: { id: decoded.UserInfo.id } });
+                if (err || foundUser.id !== decoded.UserInfo.id) {
+                    return res.sendStatus(403); // Forbidden,Invalid or expired token  
+                }
+                // const foundUser = await User.findOne({ where: { id: decoded.id } });
+                if (!foundUser) {
+                    await RefreshTokens.destroy({ where: { token: refreshToken } }); // Clean up token if user not found
                     return res.sendStatus(403); // Forbidden
                 }
-
-                // Refresh token was still valid
-                // const roles = Object.values(foundUser.roles);
                 const accessToken = jwt.sign(
                     {
                         "UserInfo": {
-                            "username": foundUser.username,
-                            // "roles": roles
+                            "id": foundUser.id,
+                            "name": foundUser.name,
+                            "role": foundUser.role,
                         }
                     },
                     // process.env.ACCESS_TOKEN_SECRET,
@@ -68,21 +48,18 @@ const handleRefreshToken = async (req, res) => {
                     { expiresIn: '5s' }
                 );
                 const newRefreshToken = jwt.sign(
-                    { "username": foundUser.username },
+                    {
+                        "UserInfo": {
+                            "id": foundUser.id,
+                            "name": foundUser.name,
+                            "role": foundUser.role,
+                        }
+                    },
                     // process.env.REFRESH_TOKEN_SECRET,
                     REFRESH_TOKEN_SECRET,
                     { expiresIn: '60s' }
                 );
-
-
-                // Saving refreshToken with current user
-                await RefreshTokens.create({
-                    user_id: foundUser.id,
-                    token: newRefreshToken,
-                });
-
-                // Remove the old refresh token
-                await foundToken.destroy();
+                await foundToken.update({ token: newRefreshToken });
 
                 // Creates Secure Cookie with refresh token
                 res.cookie('jwt', newRefreshToken, { httpOnly: true, secure: true, sameSite: 'None', maxAge: 24 * 60 * 60 * 1000 });
