@@ -19,6 +19,16 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      parent_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true, // Allow null for top-level categories
+        references: {
+          model: 'category', // Self-referencing the same table
+          key: 'id',
+        },
+        onUpdate: 'CASCADE', // Update child categories if parent ID changes
+        onDelete: 'SET NULL', // Set to NULL if the parent is deleted
+      },
       description: {
         type: Sequelize.TEXT,
         allowNull: true,

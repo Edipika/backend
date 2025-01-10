@@ -5,7 +5,7 @@ const path = require('path');
 const addCategory = async (req, res) => {
     try {
         // console.log('Form data:', req.body);
-        const { name, description, image } = req.body;
+        const { name, description, image, parent_id } = req.body;
 
         // Validation
         if (!name || typeof name !== 'string' || name.trim() === '') {
@@ -29,6 +29,7 @@ const addCategory = async (req, res) => {
         const newCategory = await Category.create({
             name: name,
             description: description,
+            parent_id: parent_id,
         });
 
         // Now save the image in the category-specific directory
@@ -78,7 +79,7 @@ const deleteCategory = async (req, res) => {
         if (!category) {
             return res.status(404).json({ message: 'Category not found' });
         }
-        const categoryDir = path.join(__dirname,'..',`uploads/categories/${categoryId}`);
+        const categoryDir = path.join(__dirname, '..', `uploads/categories/${categoryId}`);
         console.log(`Category exists: ${categoryDir}`);
 
         if (fs.existsSync(categoryDir)) {

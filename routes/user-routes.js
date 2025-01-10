@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 // const { adminlogin } = require('../controllers/login-controller');
-const { showCategories } = require('../controllers/category-controller');
+const { showCategories } = require('../controllers/categoryController');
 const verifyToken = require('../middleware/jwtMiddleware');
 
 

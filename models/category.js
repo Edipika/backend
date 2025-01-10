@@ -10,6 +10,16 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
+        parent_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true, // Allow null for top-level categories with no parent
+            references: {
+                model: 'category', // Name of the table this column references
+                key: 'id',          // Column in the referenced table
+            },
+            onUpdate: 'CASCADE',   // Update the parent_id if the referenced id changes
+            onDelete: 'SET NULL',  // Set parent_id to null if the parent is deleted
+        },
         description: {
             type: DataTypes.TEXT,
             allowNull: true
