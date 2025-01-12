@@ -4,8 +4,8 @@ const path = require('path');
 
 const addCategory = async (req, res) => {
     try {
-        // console.log('Form data:', req.body);
-        const { name, description, image, parent_id } = req.body;
+        console.log('Form data:', req.body);
+        const { name, description, parent_id } = req.body;
 
         // Validation
         if (!name || typeof name !== 'string' || name.trim() === '') {
@@ -24,18 +24,20 @@ const addCategory = async (req, res) => {
                 error: 'Image is required',
             });
         }
+        console.log(req.file);
 
         // Create a new category
         const newCategory = await Category.create({
             name: name,
             description: description,
-            parent_id: parent_id,
+            parent_id: parent_id ? parent_id : null,
         });
 
         // Now save the image in the category-specific directory
+
         // Create the category folder if it does not exist
         const categoryDir = `uploads/categories/${newCategory.id}`;
-        fs.mkdirSync(categoryDir, { recursive: true });
+        fs.mkdirSync(categoryDir, { recursive: true }); 
 
         // Move the uploaded file to the category-specific folder
         const oldPath = req.file.path;
@@ -51,7 +53,7 @@ const addCategory = async (req, res) => {
         return res.status(201).json({
             success: true,
             message: 'Category added successfully!',
-            data: newCategory, // Return the created category
+            // data: newCategory, // Return the created category
         });
     } catch (error) {
         console.error('Error adding category:', error);
@@ -61,14 +63,13 @@ const addCategory = async (req, res) => {
     }
 };
 
-const UpdateCategory = (req, res) => {
-};
+const UpdateCategory = async (req, res) => {
 
-const GetCategory = (req, res) => {
 };
 
 const deleteCategory = async (req, res) => {
     const { categoryId } = req.body;
+    console.log(req.body);
     if (!categoryId) {
         return res.status(400).json({ message: 'Category ID is required' });
     }
@@ -113,5 +114,5 @@ const showCategories = async (req, res) => {
 };
 
 module.exports = {
-    addCategory, UpdateCategory, deleteCategory, showCategories, GetCategory
+    addCategory, UpdateCategory, deleteCategory, showCategories
 };
