@@ -37,7 +37,7 @@ const addCategory = async (req, res) => {
 
         // Create the category folder if it does not exist
         const categoryDir = `uploads/categories/${newCategory.id}`;
-        fs.mkdirSync(categoryDir, { recursive: true }); 
+        fs.mkdirSync(categoryDir, { recursive: true });
 
         // Move the uploaded file to the category-specific folder
         const oldPath = req.file.path;
@@ -64,7 +64,77 @@ const addCategory = async (req, res) => {
 };
 
 const UpdateCategory = async (req, res) => {
+    console.log('Form data:', req.body);
+    const { categoryId, name, description, parent_id } = req.body;
+    // Validation
+    if (!categoryId) {
+        return res.status(400).json({
+            error: 'Category is required',
+        });
+    }
 
+    if (!name || typeof name !== 'string' || name.trim() === '') {
+        return res.status(400).json({
+            error: 'Name is required and must be a non-empty string',
+        });
+    }
+
+    if (!description || typeof description !== 'string' || description.trim() === '') {
+        return res.status(400).json({
+            error: 'Description is required and must be a non-empty string',
+        });
+    }
+    // Validation ends 
+
+    try {
+        const category = await Category.findByPk(categoryId);
+        if (!category) {
+            return res.status(400).json({
+                error: 'Category is Invalid or missing',
+            });
+        }
+        if (req.file) {
+            const categoryDir = path.join(__dirname, '..', `uploads/categories/${categoryId}`);
+
+            //deleting the folder existing for that category 
+            console.log(`Category exists: ${categoryDir}`);
+            if (fs.existsSync(categoryDir)) {
+                console.log(`Category exists: ${categoryDir}`);
+                fs.rmSync(categoryDir, { recursive: true, force: true });
+                console.log(`Category folder deleted: ${categoryDir}`);
+            }
+            //adding the new image of that category 
+            fs.mkdirSync(categoryDir, { recursive: true });
+
+            // Move the uploaded file to the category-specific folder
+            const oldPath = req.file.path;
+            const newPath = path.join(categoryDir, req.file.filename);
+            fs.renameSync(oldPath, newPath);
+            console.log(`new Category folder created : ${categoryDir}`);
+        }
+
+        await Category.update(
+            {
+                name: name,
+                description: description,
+                parent_id: parent_id ? parent_id : null,
+                image_path: `/uploads/categories/${categoryId}/${req.file.filename}`
+            },
+            { where: { id: categoryId } }
+        );
+
+        return res.status(201).json({
+            success: true,
+            message: 'Category updated successfully!',
+            // data: newCategory, // Return the created category
+        });
+        
+    } catch (error) {
+        console.error('Error updating category:', error);
+        return res.status(500).json({
+            error: 'An error occurred while updating the category',
+        });
+    }
 };
 
 const deleteCategory = async (req, res) => {
