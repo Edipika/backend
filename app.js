@@ -22,6 +22,9 @@ const corsOptions = {
   credentials: true, // Allow sending credentials (cookies, Authorization header)
 };
 
+const path = require('path');
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());

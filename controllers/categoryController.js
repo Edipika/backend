@@ -128,7 +128,7 @@ const UpdateCategory = async (req, res) => {
             message: 'Category updated successfully!',
             // data: newCategory, // Return the created category
         });
-        
+
     } catch (error) {
         console.error('Error updating category:', error);
         return res.status(500).json({
@@ -138,7 +138,9 @@ const UpdateCategory = async (req, res) => {
 };
 
 const deleteCategory = async (req, res) => {
-    const { categoryId } = req.body;
+    console.log("inside delete categories function")
+    // const { categoryId } = req.body;
+    const categoryId = req.params.id; 
     console.log(req.body);
     if (!categoryId) {
         return res.status(400).json({ message: 'Category ID is required' });
@@ -173,7 +175,7 @@ const deleteCategory = async (req, res) => {
 
 const showCategories = async (req, res) => {
     try {
-
+        console.log("inside show categories function")
         const categories = await Category.findAll();
         res.json(categories);
 

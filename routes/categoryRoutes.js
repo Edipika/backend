@@ -6,10 +6,8 @@ const { addCategory, UpdateCategory, deleteCategory, showCategories, GetCategory
 // Define the POST route for adding a category
 router.post('/add', upload.single('image'), addCategory);
 router.post('/edit', upload.single('image'), UpdateCategory);
-router.post('/delete', deleteCategory);
+router.delete('/delete/:id', deleteCategory);
 router.get('/show', showCategories);
-
-
 
 module.exports = router; // Export the router
 
