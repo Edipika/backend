@@ -49,7 +49,6 @@ const addCategory = async (req, res) => {
         newCategory.image_path = `/uploads/categories/${newCategory.id}/${req.file.filename}`;
         await newCategory.save();
 
-
         return res.status(201).json({
             success: true,
             message: 'Category added successfully!',
@@ -93,7 +92,7 @@ const UpdateCategory = async (req, res) => {
                 error: 'Category is Invalid or missing',
             });
         }
-        if (req.file) { 
+        if (req.file) {
             console.log("inside file block")
             const categoryDir = path.join(__dirname, '..', `uploads/categories/${categoryId}`);
 
@@ -117,24 +116,21 @@ const UpdateCategory = async (req, res) => {
             // Update the image_path with the new file path
             await Category.update(
                 {
-                    name: name,
-                    description: description,
-                    parent_id: parent_id ? parent_id : null,
                     image_path: `/uploads/categories/${categoryId}/${req.file.filename}`
                 },
                 { where: { id: categoryId } }
             );
-        } else {
-            console.log(" NOT inside file block")
-            await Category.update(
-                {
-                    name: name,
-                    description: description,
-                    parent_id: parent_id ? parent_id : null
-                },
-                { where: { id: categoryId } }
-            );
         }
+
+        await Category.update(
+            {
+                name: name,
+                description: description,
+                parent_id: parent_id ? parent_id : null
+            },
+            { where: { id: categoryId } }
+        );
+
 
         return res.status(201).json({
             success: true,
