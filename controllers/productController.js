@@ -185,5 +185,5 @@ const showproducts = async (req, res) => {
 };
 
 module.exports = {
-    addProduct, UpdateProduct, deleteProduct, showproducts
+    addProduct, updateProduct, deleteProduct, showproducts
 };
