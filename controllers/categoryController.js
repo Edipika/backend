@@ -93,40 +93,52 @@ const UpdateCategory = async (req, res) => {
                 error: 'Category is Invalid or missing',
             });
         }
-        if (req.file) {
+        if (req.file) { 
+            console.log("inside file block")
             const categoryDir = path.join(__dirname, '..', `uploads/categories/${categoryId}`);
 
-            //deleting the folder existing for that category 
+            // Deleting the existing folder for that category 
             console.log(`Category exists: ${categoryDir}`);
             if (fs.existsSync(categoryDir)) {
                 console.log(`Category exists: ${categoryDir}`);
                 fs.rmSync(categoryDir, { recursive: true, force: true });
                 console.log(`Category folder deleted: ${categoryDir}`);
             }
-            //adding the new image of that category 
+
+            // Adding the new image of that category 
             fs.mkdirSync(categoryDir, { recursive: true });
 
             // Move the uploaded file to the category-specific folder
             const oldPath = req.file.path;
             const newPath = path.join(categoryDir, req.file.filename);
             fs.renameSync(oldPath, newPath);
-            console.log(`new Category folder created : ${categoryDir}`);
-        }
+            console.log(`New Category folder created: ${categoryDir}`);
 
-        await Category.update(
-            {
-                name: name,
-                description: description,
-                parent_id: parent_id ? parent_id : null,
-                image_path: `/uploads/categories/${categoryId}/${req.file.filename}`
-            },
-            { where: { id: categoryId } }
-        );
+            // Update the image_path with the new file path
+            await Category.update(
+                {
+                    name: name,
+                    description: description,
+                    parent_id: parent_id ? parent_id : null,
+                    image_path: `/uploads/categories/${categoryId}/${req.file.filename}`
+                },
+                { where: { id: categoryId } }
+            );
+        } else {
+            console.log(" NOT inside file block")
+            await Category.update(
+                {
+                    name: name,
+                    description: description,
+                    parent_id: parent_id ? parent_id : null
+                },
+                { where: { id: categoryId } }
+            );
+        }
 
         return res.status(201).json({
             success: true,
             message: 'Category updated successfully!',
-            // data: newCategory, // Return the created category
         });
 
     } catch (error) {
@@ -140,7 +152,7 @@ const UpdateCategory = async (req, res) => {
 const deleteCategory = async (req, res) => {
     console.log("inside delete categories function")
     // const { categoryId } = req.body;
-    const categoryId = req.params.id; 
+    const categoryId = req.params.id;
     console.log(req.body);
     if (!categoryId) {
         return res.status(400).json({ message: 'Category ID is required' });
