@@ -4,6 +4,9 @@ const path = require('path');
 const { where } = require('sequelize');
 
 const addProduct = async (req, res) => {
+    // console.log("inside addProduct function");
+    // console.log('Form data:', req.body);
+    // console.log('Uploaded file:', req.file);
     try {
         const { categoryId, name, description, price } = req.body
         // Validations
@@ -25,7 +28,7 @@ const addProduct = async (req, res) => {
             });
         }
 
-        if (!price || typeof price !== 'number' || price <= 0) {
+        if (!price || isNaN(Number(price)) || price <= 0) {
             return res.status(400).json({
                 error: 'The price of the product is required and must be a positive integer.',
             });
@@ -61,6 +64,9 @@ const addProduct = async (req, res) => {
             product_id: product.id,
             image_path: imagePath,
         });
+        res.status(200).json({
+            message: 'Product added successfully.',
+        })
 
     } catch (error) {
         console.error('Error adding product:', error);
@@ -69,7 +75,9 @@ const addProduct = async (req, res) => {
 };
 
 const updateProduct = async (req, res) => {
-
+    // console.log("inside addProduct function");
+    // console.log('Form data:', req.body);
+    // console.log('Uploaded file:', req.file);
     const { productId, categoryId, name, description, price } = req.body;
     // Validations
     if (!productId || productId.trim() === '') {
@@ -95,7 +103,7 @@ const updateProduct = async (req, res) => {
         });
     }
 
-    if (!price || typeof price !== 'number' || price <= 0) {
+    if (!price || isNaN(Number(price)) || price <= 0) {
         return res.status(400).json({
             error: 'The price of the product is required and must be a positive integer.',
         });
@@ -117,7 +125,7 @@ const updateProduct = async (req, res) => {
             const imageDir = `uploads/products/${productId}`;
             fs.mkdirSync(imageDir, { recursive: true });
             fs.renameSync(req.file.path, path.join(imageDir, req.file.filename));
-
+            const imagePath = `uploads/products/${productId}/${req.file.filename}`
             await ProductImage.update({
                 image_path: imagePath,
             }, { where: { product_id: productId } });
@@ -130,7 +138,9 @@ const updateProduct = async (req, res) => {
             price: price,
         }, { where: { id: productId } });
 
-
+        res.status(200).json({
+            message: 'Product updated successfully.',
+        })
 
     } catch (error) {
         console.error('Error updating product:', error);
@@ -172,12 +182,11 @@ const showproducts = async (req, res) => {
         const products = await Product.findAll();
         const metaData = await ProductImage.findAll();
         res.json({
-            data: {
-                products,
-                metaData,
-            },
+            data: products.map(product => ({
+                product,
+                metaData: metaData.filter(meta => meta.product_id === product.id),
+            })),
         });
-
     } catch (error) {
         console.error('Error fetching products:', error);
         res.status(500).json({ message: 'Internal server error' });  // Internal server error
