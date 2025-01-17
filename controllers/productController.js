@@ -4,39 +4,39 @@ const path = require('path');
 const { where } = require('sequelize');
 
 const addProduct = async (req, res) => {
-    // console.log("inside addProduct function");
-    // console.log('Form data:', req.body);
-    // console.log('Uploaded file:', req.file);
+    console.log("inside addProduct function");
+    console.log('Form data:', req.body);
+    console.log('Uploaded file:', req.file);
     try {
         const { categoryId, name, description, price } = req.body
         // Validations
         if (!categoryId || categoryId.trim() === '') {
             return res.status(400).json({
-                error: 'The product must belong to a valid category.',
+                message: 'The product must belong to a valid category.',
             });
         }
 
         if (!name || typeof name !== 'string' || name.trim() === '') {
             return res.status(400).json({
-                error: 'The name of the product is required and must be a valid string.',
+                message: 'The name of the product is required and must be a valid string.',
             });
         }
 
         if (!description || typeof description !== 'string' || description.trim() === '') {
             return res.status(400).json({
-                error: 'The description of the product is required and must be a valid string.',
+                message: 'The description of the product is required and must be a valid string.',
             });
         }
 
         if (!price || isNaN(Number(price)) || price <= 0) {
             return res.status(400).json({
-                error: 'The price of the product is required and must be a positive integer.',
+                message: 'The price of the product is required and must be a positive integer.',
             });
         }
 
         if (!req.file) {
             return res.status(400).json({
-                error: 'A product image is required.',
+                message: 'A product image is required.',
             });
         }
         // Validation Ends
@@ -150,6 +150,7 @@ const updateProduct = async (req, res) => {
 
 const deleteProduct = async (req, res) => {
     try {
+        console.log(req.params);
         const { productId } = req.params;
         if (!productId) {
             return res.status(400).json({ message: 'Product is required' });
@@ -166,9 +167,14 @@ const deleteProduct = async (req, res) => {
         }
 
         // Delete product and its metadata from database
-        await product.destroy();
+
         const metaData = await ProductImage.findOne({ where: { product_id: productId } })
+        console.log(metaData);
         await metaData.destroy();
+        await product.destroy();
+        res.status(200).json({
+            message: 'Product deleted successfully.',
+        })
 
     }
     catch (error) {
@@ -181,11 +187,17 @@ const showproducts = async (req, res) => {
     try {
         const products = await Product.findAll();
         const metaData = await ProductImage.findAll();
+        const category = await Category.findAll();
         res.json({
+            // data: products.map(product => ([
+            //     product,
+            //     metaData: metaData.filter(meta => meta.product_id === product.id), //filter return an array 
+            // ])),
             data: products.map(product => ({
                 product,
-                metaData: metaData.filter(meta => meta.product_id === product.id),
-            })),
+                category: category.find(cat => cat.id === product.category_id),
+                metaData: metaData.find(meta => meta.product_id === product.id) || null,  //finds return a object
+            }))
         });
     } catch (error) {
         console.error('Error fetching products:', error);
