@@ -10,18 +10,18 @@ const addCategory = async (req, res) => {
         // Validation
         if (!name || typeof name !== 'string' || name.trim() === '') {
             return res.status(400).json({
-                error: 'Name is required and must be a non-empty string',
+                message: 'Name is required and must be a non-empty string',
             });
         }
 
         if (!description || typeof description !== 'string' || description.trim() === '') {
             return res.status(400).json({
-                error: 'Description is required and must be a non-empty string',
+                message: 'Description is required and must be a non-empty string',
             });
         }
         if (!req.file) {
             return res.status(400).json({
-                error: 'Image is required',
+                message: 'Image is required',
             });
         }
         console.log(req.file);
@@ -57,7 +57,7 @@ const addCategory = async (req, res) => {
     } catch (error) {
         console.error('Error adding category:', error);
         return res.status(500).json({
-            error: 'An error occurred while adding the category',
+            message: 'An error occurred while adding the category',
         });
     }
 };
@@ -68,19 +68,19 @@ const UpdateCategory = async (req, res) => {
     // Validation
     if (!categoryId) {
         return res.status(400).json({
-            error: 'Category is required',
+            message: 'Category is required',
         });
     }
 
     if (!name || typeof name !== 'string' || name.trim() === '') {
         return res.status(400).json({
-            error: 'Name is required and must be a non-empty string',
+            message: 'Name is required and must be a non-empty string',
         });
     }
 
     if (!description || typeof description !== 'string' || description.trim() === '') {
         return res.status(400).json({
-            error: 'Description is required and must be a non-empty string',
+            message: 'Description is required and must be a non-empty string',
         });
     }
     // Validation ends 
@@ -89,7 +89,7 @@ const UpdateCategory = async (req, res) => {
         const category = await Category.findByPk(categoryId);
         if (!category) {
             return res.status(400).json({
-                error: 'Category is Invalid or missing',
+                message: 'Category is Invalid or missing',
             });
         }
         if (req.file) {
@@ -140,7 +140,7 @@ const UpdateCategory = async (req, res) => {
     } catch (error) {
         console.error('Error updating category:', error);
         return res.status(500).json({
-            error: 'An error occurred while updating the category',
+            message: 'An error occurred while updating the category',
         });
     }
 };
