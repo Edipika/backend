@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const {userRegistration,adminRegistration} = require('../controllers/RegistrationController');
+const {registration} = require('../controllers/RegistrationController');
+const upload = require('../middleware/multer');
 
-router.post('/', userRegistration);
-router.post('/admin', adminRegistration);
+router.post('/register',upload.none(), registration);
 
 module.exports = router;

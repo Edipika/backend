@@ -3,12 +3,12 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const categoryRoutes = require('./routes/categoryRoutes');
-const productRoutes= require('./routes/productRoutes');
-const userRoutes= require('./routes/user-routes');
+const productRoutes = require('./routes/productRoutes');
+const userRoutes = require('./routes/user-routes');
 const registerRouter = require('./routes/register');
 const authRouter = require('./routes/authRoutes');
 const refreshRouter = require('./routes/refresh');
-const getUserRoutes= require('./routes/users');
+const getUserRoutes = require('./routes/users');
 const verifyJWT = require('./middleware/verifyJWT');
 const cookieParser = require('cookie-parser');
 
@@ -29,7 +29,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.urlencoded({ extended: true })); 
+app.use(express.urlencoded({ extended: true }));
 
 
 
@@ -37,15 +37,15 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/', (req, res) => {
   res.send('API is running');
 });
+app.use('/', getUserRoutes);
+app.use('/categories', categoryRoutes);
+app.use('/products', productRoutes);
+app.use('/api', userRoutes);
 
-app.use('/categories', categoryRoutes); 
-app.use('/products', productRoutes); 
-app.use('/api',userRoutes ); 
-app.use('/',getUserRoutes ); 
 
-app.use('/register', registerRouter); 
-app.use('/auth', authRouter); 
-app.use('/refresh', refreshRouter); 
+app.use('/', registerRouter);
+app.use('/auth', authRouter);
+app.use('/refresh', refreshRouter);
 
 app.use(verifyJWT);
 app.use('/users', require('./routes/users'));
