@@ -3,11 +3,12 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const categoryRoutes = require('./routes/categoryRoutes');
-const productRoutes= require('./routes/productRoutes')
-const userRoutes= require('./routes/user-routes')
+const productRoutes= require('./routes/productRoutes');
+const userRoutes= require('./routes/user-routes');
 const registerRouter = require('./routes/register');
 const authRouter = require('./routes/authRoutes');
 const refreshRouter = require('./routes/refresh');
+const getUserRoutes= require('./routes/users');
 const verifyJWT = require('./middleware/verifyJWT');
 const cookieParser = require('cookie-parser');
 
@@ -37,10 +38,10 @@ app.get('/', (req, res) => {
   res.send('API is running');
 });
 
-// category routes
 app.use('/categories', categoryRoutes); 
 app.use('/products', productRoutes); 
 app.use('/api',userRoutes ); 
+app.use('/',getUserRoutes ); 
 
 app.use('/register', registerRouter); 
 app.use('/auth', authRouter); 
