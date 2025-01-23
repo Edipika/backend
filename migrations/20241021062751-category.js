@@ -19,6 +19,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      level: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
       parent_id: {
         type: Sequelize.INTEGER,
         allowNull: true, // Allow null for top-level categories

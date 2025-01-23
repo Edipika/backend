@@ -10,6 +10,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
+        level: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
         parent_id: {
             type: DataTypes.INTEGER,
             allowNull: true, // Allow null for top-level categories with no parent
@@ -42,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
         timestamps: false,
         tableName: 'category',      // Explicitly specify the table name
         freezeTableName: true       // Disable pluralization
-      });
-    
-      return Category;
-    };
+    });
+
+    return Category;
+};
