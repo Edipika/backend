@@ -19,11 +19,11 @@ const addCategory = async (req, res) => {
                 message: 'Description is required and must be a non-empty string',
             });
         }
-        if (!req.file) {
-            return res.status(400).json({
-                message: 'Image is required',
-            });
-        }
+        // if (!req.file) {
+        //     return res.status(400).json({
+        //         message: 'Image is required',
+        //     });
+        // }
         console.log(req.file);
 
         // Create a new category
@@ -34,20 +34,22 @@ const addCategory = async (req, res) => {
         });
 
         // Now save the image in the category-specific directory
+        if (req.file) {
+            // Create the category folder if it does not exist
+            const categoryDir = `uploads/categories/${newCategory.id}`;
+            fs.mkdirSync(categoryDir, { recursive: true });
 
-        // Create the category folder if it does not exist
-        const categoryDir = `uploads/categories/${newCategory.id}`;
-        fs.mkdirSync(categoryDir, { recursive: true });
+            // Move the uploaded file to the category-specific folder
+            const oldPath = req.file.path;
+            const newPath = path.join(categoryDir, req.file.filename);
 
-        // Move the uploaded file to the category-specific folder
-        const oldPath = req.file.path;
-        const newPath = path.join(categoryDir, req.file.filename);
+            fs.renameSync(oldPath, newPath);
 
-        fs.renameSync(oldPath, newPath);
+            // Update category with image path (optional)
+            newCategory.image_path = `/uploads/categories/${newCategory.id}/${req.file.filename}`;
+            await newCategory.save();
+        }
 
-        // Update category with image path (optional)
-        newCategory.image_path = `/uploads/categories/${newCategory.id}/${req.file.filename}`;
-        await newCategory.save();
 
         return res.status(201).json({
             success: true,
@@ -192,6 +194,8 @@ const showCategories = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
+
+
 
 module.exports = {
     addCategory, UpdateCategory, deleteCategory, showCategories
