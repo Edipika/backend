@@ -19,18 +19,25 @@ const addCategory = async (req, res) => {
                 message: 'Description is required and must be a non-empty string',
             });
         }
-        // if (!req.file) {
-        //     return res.status(400).json({
-        //         message: 'Image is required',
-        //     });
-        // }
-        console.log(req.file);
+
+        if (parent_id) {
+            const category = await Category.findOne({ // Correct method
+                where: {
+                    id: parent_id // Assuming `id` is the primary key
+                }
+            });
+        
+            if (category) {
+                level = category.level + 1;
+            }
+        }
 
         // Create a new category
         const newCategory = await Category.create({
             name: name,
             description: description,
             parent_id: parent_id ? parent_id : null,
+            level: parent_id ? level : 1
         });
 
         // Now save the image in the category-specific directory
@@ -123,12 +130,23 @@ const UpdateCategory = async (req, res) => {
                 { where: { id: categoryId } }
             );
         }
-
+        if (parent_id) {
+            const parentCategory = await Category.findOne({ // Correct method
+                where: {
+                    id: parent_id // Assuming `id` is the primary key
+                }
+            });
+        
+            if (parentCategory) {
+                level = parentCategory.level + 1;
+            }
+        }
         await Category.update(
             {
                 name: name,
                 description: description,
-                parent_id: parent_id ? parent_id : null
+                parent_id: parent_id ? parent_id : null,
+                level: parent_id ? level : 1
             },
             { where: { id: categoryId } }
         );

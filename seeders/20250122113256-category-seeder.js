@@ -128,7 +128,7 @@ module.exports = {
         "description": "Veg Snacks",
         "image_path": "/uploads/categories/14/veg-snacks.webp",
 
-      }
+      },
     ], {});
 
   },
