@@ -205,6 +205,29 @@ const showproducts = async (req, res) => {
     }
 };
 
+
+const logproducts = async (req, res) => {
+    try {
+        console.log("inside logproducts function");
+        // const products = await Product.findAll();
+        const metaData = await ProductImage.findAll();
+
+        res.json(metaData);
+
+        // res.status(200).json({
+        //     products, // List of products
+        //     metaData, // Metadata about the products
+        // });
+
+
+
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        res.status(500).json({ message: 'Internal server error' });  // Internal server error
+    }
+};
+
+
 module.exports = {
-    addProduct, updateProduct, deleteProduct, showproducts
+    addProduct, updateProduct, deleteProduct, showproducts, logproducts
 };

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('../middleware/multer');
-const { addCategory, UpdateCategory, deleteCategory, showCategories, GetCategory } = require('../controllers/categoryController');
+const { addCategory, UpdateCategory, deleteCategory, showCategories, } = require('../controllers/categoryController');
 
 // Define the POST route for adding a category
 router.post('/add', upload.single('image'), addCategory);
