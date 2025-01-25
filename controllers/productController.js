@@ -189,10 +189,6 @@ const showproducts = async (req, res) => {
         const metaData = await ProductImage.findAll();
         const category = await Category.findAll();
         res.json({
-            // data: products.map(product => ([
-            //     product,
-            //     metaData: metaData.filter(meta => meta.product_id === product.id), //filter return an array 
-            // ])),
             data: products.map(product => ({
                 product,
                 category: category.find(cat => cat.id === product.category_id),
@@ -206,20 +202,25 @@ const showproducts = async (req, res) => {
 };
 
 
-const logproducts = async (req, res) => {
+const getProductByCategory = async (req, res) => {
+    const { categoryId } = req.params;
+    console.log("inside get product by category function", categoryId);
+    if (!categoryId) {
+        return res.status(400).json({ "message": "category doesnt exists" })
+    }
     try {
-        console.log("inside logproducts function");
-        // const products = await Product.findAll();
+        const products = await Product.findAll({
+            where: { category_id: categoryId },
+        });
+
         const metaData = await ProductImage.findAll();
 
-        res.json(metaData);
-
-        // res.status(200).json({
-        //     products, // List of products
-        //     metaData, // Metadata about the products
-        // });
-
-
+        res.json({
+            data: products.map(product => ({
+                product,
+                metaData: metaData.find(meta => meta.product_id === product.id) || null,  //finds return a object
+            }))
+        });
 
     } catch (error) {
         console.error('Error fetching products:', error);
@@ -227,7 +228,29 @@ const logproducts = async (req, res) => {
     }
 };
 
+const getProduct = async (req, res) => {
+    const { productId } = req.params;
+    console.log("inside get product by category function", productId);
+    if (!productId) {
+        return res.status(400).json({ "message": "category doesnt exists" })
+    }
+    try {
+        const products = await Product.findByPk(productId);
+        const metaData = await ProductImage.findAll({
+            where: { product_id: productId }
+        });
+
+        res.json({
+            product: products,
+            productMetaData: metaData
+        });
+
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        res.status(500).json({ message: 'Internal server error' });  // Internal server error
+    }
+};
 
 module.exports = {
-    addProduct, updateProduct, deleteProduct, showproducts, logproducts
+    addProduct, updateProduct, deleteProduct, showproducts, getProductByCategory, getProduct
 };

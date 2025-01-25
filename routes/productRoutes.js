@@ -1,14 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('../middleware/multer');
-const { addProduct, updateProduct, deleteProduct, showproducts,logproducts } = require('../controllers/productController'); 
+const { addProduct, updateProduct, deleteProduct, showproducts,getProductByCategory,getProduct } = require('../controllers/productController'); 
 
 // Define the POST route for adding a product
 router.post('/add',upload.single('image'), addProduct);
 router.post('/edit', upload.single('image'), updateProduct);
 router.delete('/delete/:productId', deleteProduct);
 router.get('/show', showproducts);
-router.get('/log', logproducts);
+router.get('/getByCategory/:categoryId', getProductByCategory);
+router.get('/getProduct/:productId', getProduct);
 
 
 module.exports = router; // Export the router
