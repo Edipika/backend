@@ -42,6 +42,11 @@ app.use('/categories', categoryRoutes);
 app.use('/products', productRoutes);
 app.use('/api', userRoutes);
 
+app.post('/logout', (req, res) => {
+  console.error('logged out');
+  res.clearCookie('jwt', { httpOnly: true, secure: true, sameSite: 'None' });
+  res.sendStatus(200); 
+});
 
 app.use('/', registerRouter);
 app.use('/auth', authRouter);

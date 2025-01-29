@@ -5,7 +5,7 @@ const REFRESH_TOKEN_SECRET = 'Dipika@8502';
 
 const handleRefreshToken = async (req, res) => {
     const cookies = req.cookies;
-    if (!cookies?.jwt) return res.sendStatus(401);
+    if (!cookies?.jwt) return res.status(401).json({ message: "Unauthorized" });
     const refreshToken = cookies.jwt;
     res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true });
 
@@ -26,6 +26,9 @@ const handleRefreshToken = async (req, res) => {
             refreshToken,
             REFRESH_TOKEN_SECRET,
             async (err, decoded) => {
+                if (!decoded?.UserInfo?.id) {
+                    return res.status(403).json({ message: "Invalid token" });
+                }
                 const foundUser = await User.findOne({ where: { id: decoded.UserInfo.id } });
                 if (err || foundUser.id !== decoded.UserInfo.id) {
                     return res.sendStatus(403); // Forbidden,Invalid or expired token  

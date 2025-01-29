@@ -30,7 +30,7 @@ module.exports = {
       role: {
         type: Sequelize.INTEGER,
         allowNull: false,
-      },
+      },//superadmin=1,admin=2,user=3
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,

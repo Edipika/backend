@@ -13,7 +13,7 @@ const handleLogin = async (req, res) => {
 
     const foundUser = await User.findOne({
         where: { email: user }
-    }); 
+    });
     // console.log('userdeepika',foundUser);
 
     if (!foundUser) return res.sendStatus(401); //Unauthorized 
@@ -50,10 +50,10 @@ const handleLogin = async (req, res) => {
 
         if (cookies?.jwt) {
             const refreshToken = cookies.jwt;
-        
+
             // Check if the refresh token exists in the database
             const refreshTokenRow = await RefreshTokens.findOne({ where: { token: refreshToken } });
-        
+
             if (!refreshTokenRow) {
                 // Token reuse detected, clear all refresh tokens for this user
                 await RefreshTokens.destroy({ where: { userId: foundUser.id } });
@@ -61,7 +61,7 @@ const handleLogin = async (req, res) => {
                 // Remove only the reused token
                 await RefreshTokens.destroy({ where: { token: refreshToken } });
             }
-        
+
             res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true });
         }
 
@@ -81,7 +81,12 @@ const handleLogin = async (req, res) => {
         res.cookie('jwt', newRefreshToken, { httpOnly: true, secure: true, sameSite: 'None', maxAge: 24 * 60 * 60 * 1000 });
 
         // Send authorization roles and access token to user
-        res.json({ accessToken });
+        // res.json({ accessToken });  foundUser.name and foundUser.role
+        res.json({
+            accessToken,
+            name: foundUser.name,
+            role: foundUser.role
+        });
 
     } else {
         res.sendStatus(401);
