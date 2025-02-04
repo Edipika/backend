@@ -36,6 +36,18 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      image_path: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      quantity_per_unit: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+      },   
+      stock_quantity: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+      },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,
@@ -50,11 +62,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
+    await queryInterface.dropTable('products');
   }
 };

@@ -59,11 +59,14 @@ const addProduct = async (req, res) => {
         fs.mkdirSync(imageDir, { recursive: true });
         fs.renameSync(req.file.path, path.join(imageDir, req.file.filename));
 
-        const imagePath = `uploads/products/${product.id}/${req.file.filename}`
-        await ProductImage.create({
-            product_id: product.id,
-            image_path: imagePath,
-        });
+        // const imagePath 
+        product.image_path = `uploads/products/${product.id}/${req.file.filename}`;
+        await product.save();
+        // await ProductImage.create({
+        //     product_id: product.id,
+        //     image_path: imagePath,
+        // });
+
         res.status(200).json({
             message: 'Product added successfully.',
         })
@@ -126,9 +129,9 @@ const updateProduct = async (req, res) => {
             fs.mkdirSync(imageDir, { recursive: true });
             fs.renameSync(req.file.path, path.join(imageDir, req.file.filename));
             const imagePath = `uploads/products/${productId}/${req.file.filename}`
-            await ProductImage.update({
+            await Product.update({
                 image_path: imagePath,
-            }, { where: { product_id: productId } });
+            }, { where: { id: productId } });
         }
         // update product without image
         await Product.update({
@@ -168,9 +171,9 @@ const deleteProduct = async (req, res) => {
 
         // Delete product and its metadata from database
 
-        const metaData = await ProductImage.findOne({ where: { product_id: productId } })
-        console.log(metaData);
-        await metaData.destroy();
+        // const metaData = await ProductImage.findOne({ where: { product_id: productId } })
+        // console.log(metaData);
+        // await metaData.destroy();
         await product.destroy();
         res.status(200).json({
             message: 'Product deleted successfully.',
@@ -183,16 +186,15 @@ const deleteProduct = async (req, res) => {
     }
 };
 
-const showproducts = async (req, res) => {
+const showproducts = async (req, res) => { //to show products in admin panel
     try {
         const products = await Product.findAll();
-        const metaData = await ProductImage.findAll();
+        // const metaData = await ProductImage.findAll();
         const category = await Category.findAll();
         res.json({
             data: products.map(product => ({
                 product,
                 category: category.find(cat => cat.id === product.category_id),
-                metaData: metaData.find(meta => meta.product_id === product.id) || null,  //finds return a object
             }))
         });
     } catch (error) {
@@ -202,7 +204,7 @@ const showproducts = async (req, res) => {
 };
 
 
-const getProductByCategory = async (req, res) => {
+const getProductByCategory = async (req, res) => { //to show products by filteration of category
     const { categoryId } = req.params;
     console.log("inside get product by category function", categoryId);
     if (!categoryId) {
@@ -213,14 +215,8 @@ const getProductByCategory = async (req, res) => {
             where: { category_id: categoryId },
         });
 
-        const metaData = await ProductImage.findAll();
-
-        res.json({
-            data: products.map(product => ({
-                product,
-                metaData: metaData.find(meta => meta.product_id === product.id) || null,  //finds return a object
-            }))
-        });
+        res.json(products);
+        // res.status(200).json({ message: 'success' });
 
     } catch (error) {
         console.error('Error fetching products:', error);
@@ -228,7 +224,7 @@ const getProductByCategory = async (req, res) => {
     }
 };
 
-const getProduct = async (req, res) => {
+const getProduct = async (req, res) => { //to show products in product details page
     const { productId } = req.params;
     console.log("inside get product by category function", productId);
     if (!productId) {
@@ -236,14 +232,11 @@ const getProduct = async (req, res) => {
     }
     try {
         const products = await Product.findByPk(productId);
-        const metaData = await ProductImage.findAll({
-            where: { product_id: productId }
-        });
+        // const metaData = await ProductImage.findAll({
+        //     where: { product_id: productId }
+        // });
 
-        res.json({
-            product: products,
-            productMetaData: metaData
-        });
+        res.json(products);
 
     } catch (error) {
         console.error('Error fetching products:', error);
@@ -254,3 +247,4 @@ const getProduct = async (req, res) => {
 module.exports = {
     addProduct, updateProduct, deleteProduct, showproducts, getProductByCategory, getProduct
 };
+

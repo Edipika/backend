@@ -13,14 +13,14 @@ module.exports = {
      * }], {});
     */
     // const hashedPassword = await bcrypt.hash('demoPassword', 10);
-    await queryInterface.bulkInsert('Users', [{
-      name: 'demoUser',
-      email: 'demoUser@gmail.com',
-      password: 'hashedPassword',
-      role:2,
-      created_at: new Date(),
-      updated_at: new Date()
-    }], {});
+    // await queryInterface.bulkInsert('Users', [{
+    //   name: 'demoUser',
+    //   email: 'demoUser@gmail.com',
+    //   password: 'hashedPassword',
+    //   role:2,
+    //   created_at: new Date(),
+    //   updated_at: new Date()
+    // }], {});
   },
 
   async down (queryInterface, Sequelize) {

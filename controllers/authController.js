@@ -5,20 +5,20 @@ const bcrypt = require('bcrypt');
 const REFRESH_TOKEN_SECRET = 'Dipika@8502';
 
 const handleLogin = async (req, res) => {
-    console.error('Executing login requet');
+    console.error('Executing login request');
     const cookies = req.cookies;
-
     const { user, pwd } = req.body;
     if (!user || !pwd) return res.status(400).json({ 'message': 'Username and password are required.' });
 
     const foundUser = await User.findOne({
         where: { email: user }
     });
-    // console.log('userdeepika',foundUser);
+    console.log('userdeepika',foundUser);
 
     if (!foundUser) return res.sendStatus(401); //Unauthorized 
 
     const match = await bcrypt.compare(pwd, foundUser.password);
+    console.log('match',match);
     if (match) {
         // const roles = Object.values(foundUser.roles).filter(Boolean);
         // create JWTs

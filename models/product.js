@@ -25,6 +25,18 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
+        image_path: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        quantity_per_unit: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+        },
+        stock_quantity: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+        },
         created_at: {
             type: DataTypes.DATE,
             allowNull: false,
