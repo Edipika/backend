@@ -9,6 +9,7 @@ const registerRouter = require('./routes/register');
 const authRouter = require('./routes/authRoutes');
 const refreshRouter = require('./routes/refresh');
 const getUserRoutes = require('./routes/users');
+const cartRoutes = require('./routes/cartRoutes');
 const verifyJWT = require('./middleware/verifyJWT');
 const cookieParser = require('cookie-parser');
 
@@ -31,8 +32,6 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
-
-
 // Example route
 app.get('/', (req, res) => {
   res.send('API is running');
@@ -40,6 +39,7 @@ app.get('/', (req, res) => {
 app.use('/', getUserRoutes);
 app.use('/categories', categoryRoutes);
 app.use('/products', productRoutes);
+app.use('/cart', cartRoutes);
 app.use('/api', userRoutes);
 
 app.post('/logout', (req, res) => {
@@ -48,9 +48,11 @@ app.post('/logout', (req, res) => {
   res.sendStatus(200); 
 });
 
+
 app.use('/', registerRouter);
 app.use('/auth', authRouter);
 app.use('/refresh', refreshRouter);
+
 
 app.use(verifyJWT);
 app.use('/users', require('./routes/users'));
