@@ -32,7 +32,10 @@ const addToCart = async (req, res) => {
             // Check if the product is already in the cart
             let cartItem = await CartItem.findOne({ where: { cart_id: cart.id, product_id: productId } });
             if (cartItem) {
-                // Update quantity
+                if (quantity == 0 || quantity <= 0) {
+                    await cartItem.destroy();
+                    return;
+                }
                 cartItem.quantity = quantity;
                 await cartItem.save();
             } else {
@@ -50,12 +53,16 @@ const addToCart = async (req, res) => {
         // const cartItems = await CartItem.findAll({ where: { cart_id: cart.id } });
         const cartItems = await CartItem.findAll({
             where: { cart_id: cart.id },
-            include: [{ model: Product, attributes: ["name","quantity_per_unit","image_path"] }] // Select product details
+            include: [{ model: Product, attributes: ["name", "quantity_per_unit", "image_path"] }] // Select product details
         });
         const totalPrice = cartItems.reduce((sum, item) => sum + item.quantity * item.price_at_purchase, 0);
         cart.total_price = totalPrice;
         await cart.save();
-        console.log("response sent..");
+        console.log(cart.total_price);
+        if(cart.total_price==0){
+            await cart.destroy(); 
+            return res.status(200).json({ message: 'cart empty' });
+        }
         return res.status(200).json({ cart, cartItems });
     } catch (error) {
         console.error(error);
