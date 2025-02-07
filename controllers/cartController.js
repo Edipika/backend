@@ -2,7 +2,7 @@ const { Cart, CartItem, Product, User } = require('../models');
 
 const addToCart = async (req, res) => {
     try {
-        const { products } = req.body; 
+        const { products } = req.body;
         const user_id = 2;
         const user = await User.findOne({ where: { id: user_id } });
         // Validate request
@@ -13,12 +13,6 @@ const addToCart = async (req, res) => {
         if (!Array.isArray(products) || products.length === 0) {
             return res.status(400).json({ message: 'Cart is empty' });
         }
-
-        // Check if the product exists
-        // const product = await Product.findByPk(product_id);
-        // if (!product) {
-        //     return res.status(404).json({ message: 'Product not found' });
-        // }
 
         // Find or create a cart for the user
         let cart = await Cart.findOne({ where: { user_id, status: 'active' } });
@@ -53,12 +47,16 @@ const addToCart = async (req, res) => {
         }
 
         // Update total price in the cart
-        const cartItems = await CartItem.findAll({ where: { cart_id: cart.id } });
+        // const cartItems = await CartItem.findAll({ where: { cart_id: cart.id } });
+        const cartItems = await CartItem.findAll({
+            where: { cart_id: cart.id },
+            include: [{ model: Product, attributes: ["name","quantity_per_unit","image_path"] }] // Select product details
+        });
         const totalPrice = cartItems.reduce((sum, item) => sum + item.quantity * item.price_at_purchase, 0);
         cart.total_price = totalPrice;
         await cart.save();
-
-        return res.status(200).json({ message: 'Products added to cart successfully', cart, cartItems });
+        console.log("response sent..");
+        return res.status(200).json({ cart, cartItems });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Internal server error' });
