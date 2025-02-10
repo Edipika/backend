@@ -30,22 +30,7 @@ const addToCart = async (req, res) => {
 
             // Check if the product is already in the cart
             let cartItem = await CartItem.findOne({ where: { cart_id: cart.id, product_id: productId } });
-            // if (cartItem) {
-            //     if (quantity == 0 || quantity <= 0) {
-            //         await cartItem.destroy();
-            //         return;
-            //     }
-            //     cartItem.quantity = quantity;
-            //     await cartItem.save();
-            // } else {
-            //     // Add new item to cart
-            //     await CartItem.create({
-            //         cart_id: cart.id,
-            //         product_id: productId,
-            //         quantity,
-            //         price_at_purchase: product.price,
-            //     });
-            // }
+
             if (cartItem) {
                 if (quantity <= 0) {             
                     await cartItem.destroy();
