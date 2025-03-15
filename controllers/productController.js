@@ -189,7 +189,6 @@ const deleteProduct = async (req, res) => {
 const showproducts = async (req, res) => { //to show products in admin panel
     try {
         const products = await Product.findAll();
-        // const metaData = await ProductImage.findAll();
         const category = await Category.findAll();
         res.json({
             data: products.map(product => ({
