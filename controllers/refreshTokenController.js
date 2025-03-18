@@ -67,7 +67,12 @@ const handleRefreshToken = async (req, res) => {
                 // Creates Secure Cookie with refresh token
                 res.cookie('jwt', newRefreshToken, { httpOnly: true, secure: true, sameSite: 'None', maxAge: 24 * 60 * 60 * 1000 });
 
-                res.json({ accessToken })
+                // res.json({ accessToken })
+                res.json({
+                    accessToken,
+                    name: foundUser.name,
+                    role: foundUser.role
+                });
             }
         );
     } catch (error) {

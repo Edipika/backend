@@ -3,7 +3,7 @@ const { Cart, CartItem, Product, User } = require('../models');
 const addToCart = async (req, res) => {
     try {
         const { products } = req.body;
-        const user_id = 2;
+        const user_id = 1;
         const user = await User.findOne({ where: { id: user_id } });
         // Validate request
         if (!user_id || !user) {
