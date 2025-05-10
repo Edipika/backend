@@ -158,7 +158,7 @@ const handleLogin = async (req, res) => {
             }
         },
         REFRESH_TOKEN_SECRET,
-        { expiresIn: '24h' }
+        { expiresIn: '23h' }
     );
 
     // Handle existing refresh token in cookies
