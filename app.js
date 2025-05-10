@@ -15,7 +15,7 @@ const cookieParser = require('cookie-parser');
 
 
 const corsOptions = {
-  origin: 'http://localhost:3000', // Allow frontend origin
+  origin: 'http://localhost:5173', // Allow frontend origin
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow necessary methods
   allowedHeaders: ['Content-Type', 'Authorization'], // Allow necessary headers
   credentials: true, // Allow sending credentials (cookies, Authorization header)
@@ -36,7 +36,7 @@ app.get('/', (req, res) => {
 app.use('/', userRoutes);
 app.use('/categories', categoryRoutes);
 app.use('/products', productRoutes);
-app.use('/cart',verifyJWT, cartRoutes);
+app.use('/cart',verifyJWT, cartRoutes); //middleware is applied 
 app.use('/api',verifyJWT, userRoutes);
 
 app.post('/logout', (req, res) => {
