@@ -15,7 +15,7 @@ const cookieParser = require('cookie-parser');
 
 
 const corsOptions = {
-  origin: 'https://www.foodmart-api.dipikaepili.in', // Allow frontend origin
+  origin: 'https://www.foodmart.dipikaepili.in', // Allow frontend origin
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow necessary methods
   allowedHeaders: ['Content-Type', 'Authorization'], // Allow necessary headers
   credentials: true, // Allow sending credentials (cookies, Authorization header)
