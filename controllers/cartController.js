@@ -2,9 +2,11 @@ const { Cart, CartItem, Product, User } = require('../models');
 
 const addToCart = async (req, res) => {
     try {
-        console.log("requested cart details:",req);
-        const { products } = req.body;
-        const user_id = 1; //vhem
+        const { products, user_id } = req.body;
+
+        console.error('🛒 Received addToCart request');
+        console.log('User ID:', user_id);
+        console.log('Products:', products);
         const user = await User.findOne({ where: { id: user_id } });
         // Validate request
         if (!user_id || !user) {
@@ -23,7 +25,7 @@ const addToCart = async (req, res) => {
 
         for (const item of products) {
             const { productId, quantity } = item;
-            console.log("productId and quant: ",productId, quantity);
+            console.log("productId and quant: ", productId, quantity);
             const product = await Product.findByPk(productId);
             if (!product) {
                 return res.status(404).json({ message: `Product with ID ${productId} not found` });
@@ -33,14 +35,14 @@ const addToCart = async (req, res) => {
             let cartItem = await CartItem.findOne({ where: { cart_id: cart.id, product_id: productId } });
 
             if (cartItem) {
-                if (quantity <= 0) {             
+                if (quantity <= 0) {
                     await cartItem.destroy();
-                } else {                  
-                    cartItem.quantity = quantity;  
+                } else {
+                    cartItem.quantity = quantity;
                     await cartItem.save();
                 }
             } else {
-                if (quantity > 0) {                   
+                if (quantity > 0) {
                     await CartItem.create({
                         cart_id: cart.id,
                         product_id: productId,
