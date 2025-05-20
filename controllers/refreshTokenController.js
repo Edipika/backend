@@ -5,7 +5,7 @@ const REFRESH_TOKEN_SECRET = 'Dipika@8502';
 
 const handleRefreshToken = async (req, res) => {
     const cookies = req.cookies;
-    if (!cookies?.jwt) return res.status(401).json({ message: "Unauthorized" });
+    if (!cookies?.jwt) return res.status(401).json({ message: "UnauthorizedfromRefresh" });
     const refreshToken = cookies.jwt;
     res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true });
 
