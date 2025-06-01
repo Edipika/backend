@@ -14,19 +14,19 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'carts',  // Foreign key referencing the Carts table
+          model: 'carts',  
           key: 'id',
         },
-        onDelete: 'CASCADE',  // Optional: Delete cart items when the cart is deleted
+        onDelete: 'CASCADE',  
       },
       product_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'products',  // Assuming you have a Products table
+          model: 'products', 
           key: 'id',
         },
-        onDelete: 'CASCADE',  // Optional: Delete cart items when the product is deleted
+        onDelete: 'CASCADE', 
       },
       quantity: {
         type: Sequelize.INTEGER,
