@@ -8,6 +8,7 @@ const {
 } = require("../models");
 
 const processCheckout = async (req, res) => {
+    console.log("Request Body:", req.body);
   const {
     user_id,
     amount_from_frontend,

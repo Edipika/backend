@@ -10,6 +10,7 @@ const authRouter = require("./routes/authRoutes");
 const refreshRouter = require("./routes/refresh");
 const userRoutes = require("./routes/users");
 const cartRoutes = require("./routes/cartRoutes");
+const checkoutRoutes = require("./routes/checkoutRoutes");
 const verifyJWT = require("./middleware/verifyJWT");
 const cookieParser = require("cookie-parser");
 
@@ -47,6 +48,7 @@ app.use("/", userRoutes);
 app.use("/api", serachRoutes);
 app.use("/categories", categoryRoutes);
 app.use("/products", productRoutes);
+app.use("/", checkoutRoutes);
  
 //below are secured routes
 app.use("/cart", verifyJWT, cartRoutes); //middleware is applied
