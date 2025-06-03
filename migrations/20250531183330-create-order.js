@@ -38,8 +38,12 @@ module.exports = {
         allowNull: false
       },
       card_number: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING(16),
         allowNull: false,
+      },
+      name_on_card: {
+        type: Sequelize.STRING,
+        allowNull: false
       },
       expiry_date: {
         type: Sequelize.STRING,
@@ -50,7 +54,7 @@ module.exports = {
         allowNull: false,
       },
       transaction_id: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
         allowNull: false,
       },
       created_at: {

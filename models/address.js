@@ -1,25 +1,56 @@
 
 module.exports = (sequelize, DataTypes) => {
   const Address = sequelize.define('Address', {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+      allowNull: false,
+    },
     user_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,  
+      allowNull: false,
       references: {
-        model: 'users',  
-        key: 'id',  
+        model: 'users',
+        key: 'id',
       },
-      onDelete: 'CASCADE', 
+      onDelete: 'CASCADE',
     },
-    total_price: DataTypes.DECIMAL(10, 2),
-    status: {
+    address: {
       type: DataTypes.STRING,
-      allowNull: false,  // You can define possible statuses like 'active', 'completed'
+      allowNull: false,
     },
-  }, 
-  {
-    tableName: 'address',  
-    timestamps: true,  
-  });
+    city: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    state: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    country: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    pincode: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    }
+  },
+    {
+      tableName: 'address',
+      timestamps: false,
+    });
 
   // Associations
   Address.associate = (models) => {
