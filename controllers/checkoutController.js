@@ -86,7 +86,10 @@ const processCheckout = async (req, res) => {
   try {
     const address = await Address.create({
       user_id: user_id,
-      address: address1,
+      first_name: first_name,
+      last_name: last_name,
+      address1: address1,
+      address2: address2,
       city: city,
       state: state,
       country: "India",
@@ -97,12 +100,9 @@ const processCheckout = async (req, res) => {
     const cartItems = await CartItem.findAll({ where: { cart_id: cart?.id } });
     const subtotal = cart?.total_price;
 
-    // const tax = subtotal * 0.18;       // 241.56
-    // const total = parseFloat((subtotal + tax).toFixed(2));
-    // const total = subtotal + tax;
-    const subtotalNum = Number(subtotal);       // converts string/other to number (or NaN)
-    const tax = subtotalNum * 0.18;              // tax is number (or NaN)
-    const total = Number((subtotalNum + tax).toFixed(2));  // safe toFixed on number
+    const subtotalNum = Number(subtotal);
+    const tax = subtotalNum * 0.18;
+    const total = Number((subtotalNum + tax).toFixed(2));
 
     console.log(subtotal, total, amount_from_frontend);
 
@@ -130,15 +130,16 @@ const processCheckout = async (req, res) => {
         });
       }
 
-      // await CartItem.findOne({ where: { cart_id: cart?.id } }).delete();
-      // await Cart.findOne({ where: { user_id: user_id } }).delete();
-
       await CartItem.destroy({ where: { cart_id: cart?.id } });
       await Cart.destroy({ where: { user_id: user_id } });
 
+      const orderItem = await OrderItem.findAll({ where: { order_id: order?.id } });
+      // console.log(orderItem);
+
       return res.status(200).json({
         message: "Order Placed Successfully",
-        orderId: order?.transaction_id,
+        order: order,
+    
       });
     } else {
       return res.status(400).json({ message: "Amount Mismatch" });
@@ -148,6 +149,7 @@ const processCheckout = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 module.exports = {
   processCheckout,

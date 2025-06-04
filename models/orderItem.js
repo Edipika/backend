@@ -56,7 +56,6 @@ module.exports = (sequelize, DataTypes) => {
 
     // Associations
     OrderItem.associate = (models) => {
-        OrderItem.belongsTo(models.User, { foreignKey: 'user_id', onDelete: 'CASCADE' });
         OrderItem.belongsTo(models.Order, { foreignKey: 'order_id', onDelete: 'CASCADE' });
         // OrderItem.hasMany(models.OrderItemItem, { foreignKey: 'OrderItem_id', onDelete: 'CASCADE' });
     };

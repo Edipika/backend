@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -9,7 +9,7 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-    await queryInterface.createTable('address', {
+    await queryInterface.createTable("address", {
       id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
@@ -20,12 +20,24 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'users',
-          key: 'id',
+          model: "users",
+          key: "id",
         },
-        onDelete: 'CASCADE',
+        onDelete: "CASCADE",
       },
-      address: {
+      first_name: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      last_name: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      address1: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      address2: {
         type: Sequelize.STRING,
         allowNull: false,
       },
@@ -48,14 +60,14 @@ module.exports = {
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
       updated_at: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
-      }
-    })
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+      },
+    });
   },
 
   async down(queryInterface, Sequelize) {
@@ -65,7 +77,6 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-    await queryInterface.dropTable('address');
-
-  }
+    await queryInterface.dropTable("address");
+  },
 };
