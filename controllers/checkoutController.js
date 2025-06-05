@@ -5,6 +5,7 @@ const {
   CartItem,
   Order,
   OrderItem,
+  Product
 } = require("../models");
 const { param } = require("../routes/categoryRoutes");
 
@@ -134,13 +135,14 @@ const processCheckout = async (req, res) => {
       await CartItem.destroy({ where: { cart_id: cart?.id } });
       await Cart.destroy({ where: { user_id: user_id } });
 
-      const orderItem = await OrderItem.findAll({ where: { order_id: order?.id } });
+      const orderItem = await OrderItem.findAll({
+        where: { order_id: order?.id },
+      });
       // console.log(orderItem);
 
       return res.status(200).json({
         message: "Order Placed Successfully",
         order: order,
-
       });
     } else {
       return res.status(400).json({ message: "Amount Mismatch" });
@@ -153,44 +155,39 @@ const processCheckout = async (req, res) => {
 
 const fetchOrderDetails = async (req, res) => {
   try {
-
     // const userId = param.user.id;
     const userId = req.query.userId;
-    console.error(userId);
+    console.error("userId", userId);
     // Fetch cart with cart items
-    const order = await Order.findOne({
+    const orders = await Order.findAll({
       where: { user_id: userId },
       include: [
         {
           model: OrderItem,
-          as: 'order_items' // Make sure association alias matches your model
-        },{
+          as: "order_items",
+          include: [
+            {
+              model: Product,
+              as: "product",
+              attributes: ["name"],
+            },
+          ],
+        },
+        {
           model: Address,
-          as: 'address'
-        }
-      ]
+          as: "address",
+        },
+      ],
     });
 
-    // Fetch shipping address
-    // const address = await Address.findOne({
-    //   where: { user_id: userId },
-    //   order: [['created_at', 'DESC']] // Get latest address
-    // });
-
-    if (!order || !order.order_items.length) {
-      return res.status(404).json({ message: "order is empty" });
+    if (!orders || orders.length === 0 || !orders[0].order_items.length) {
+      return res.status(400).json({ message: "orders is empty" });
     }
-
-    // if (!address) {
-    //   return res.status(404).json({ message: "Shipping address not found" });
-    // }
 
     // Send order/order details along with address
     return res.status(200).json({
-      order,
-      address
+      orders,
     });
-
   } catch (error) {
     console.error("Order details failed to fetch:", error);
     return res.status(500).json({ message: "Internal server error" });
@@ -198,5 +195,6 @@ const fetchOrderDetails = async (req, res) => {
 };
 
 module.exports = {
-  processCheckout, fetchOrderDetails
+  processCheckout,
+  fetchOrderDetails,
 };

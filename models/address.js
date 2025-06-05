@@ -72,8 +72,11 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "user_id",
       onDelete: "CASCADE",
     });
-    Address.hasOne(models.Address, { as: 'address', foreignKey: 'address_id' });
-    // Address.hasMany(models.AddressItem, { foreignKey: 'Address_id', onDelete: 'CASCADE' });
+
+    Address.hasMany(models.Order, {
+      foreignKey: "address_id",
+      as: "orders", // This alias is not required in your query, just needed to complete the relation
+    });
   };
 
   return Address;
