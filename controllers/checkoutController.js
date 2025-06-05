@@ -1,3 +1,5 @@
+// controllers/checkoutController.js
+const { sendConfirmationMail } = require("../config/mail");
 const {
   User,
   Address,
@@ -5,7 +7,7 @@ const {
   CartItem,
   Order,
   OrderItem,
-  Product
+  Product,
 } = require("../models");
 const { param } = require("../routes/categoryRoutes");
 
@@ -135,9 +137,18 @@ const processCheckout = async (req, res) => {
       await CartItem.destroy({ where: { cart_id: cart?.id } });
       await Cart.destroy({ where: { user_id: user_id } });
 
-      const orderItem = await OrderItem.findAll({
-        where: { order_id: order?.id },
-      });
+      const user = await User.findOne({ where: { id: user_id } });
+      console.log("user", user);
+      // await sendConfirmationMail(user.email);
+      await sendConfirmationMail(
+        user.email,
+        order.transaction_id,
+        order.total_amount
+      );
+
+      // const orderItem = await OrderItem.findAll({
+      //   where: { order_id: order?.id },
+      // });
       // console.log(orderItem);
 
       return res.status(200).json({
